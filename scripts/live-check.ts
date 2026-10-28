@@ -44,7 +44,8 @@ if (!token || !chatId) {
 const message = fmt`Live check ${bold('entities')} / ${italic('HTML')} / ${link('MarkdownV2', 'https://example.com')}
 ${pre('const ok = true;', 'ts')}
 ${expandableQuote('Expandable quote content')}
-${dateTime('March 17, 2022, 22:45', 1647531900, 'wDT')}`;
+${dateTime('March 17, 2022, 15:45 UTC', 1647531900, 'wDT')}
+`;
 
 const formats: TelegramPayloadFormat[] = ['entities', 'HTML', 'MarkdownV2'];
 let failures = 0;
