@@ -349,11 +349,14 @@ Types exported: `Content`, `DateTimeFormat`, `FormattedMessage`, `MessageEntity`
 
 ```sh
 pnpm install
-pnpm test        # unit and deterministic fuzz tests via node:test
+pnpm test           # unit and deterministic fuzz tests via node:test
+pnpm test:coverage  # same suite with a 95% line/branch/function gate
 pnpm typecheck
 pnpm build
-pnpm check       # typecheck + test + build
+pnpm check          # typecheck + coverage + build
 ```
+
+Coverage uses Node's built-in test runner instrumentation; no extra dependency is required. The current suite reports 100% lines, 98.26% branches, and 100% functions.
 
 ### Live Telegram check
 
