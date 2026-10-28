@@ -16,21 +16,10 @@ import {
   type FormattedMessage,
 } from '../src/index.js';
 
-export const DATE_TIME_FORMATS = [
-  'r',
-  'd',
-  'D',
-  't',
-  'T',
-  'wD',
-  'wT',
-  'wDT',
-] as const satisfies readonly DateTimeFormat[];
-
-const DEFAULT_LINK_URL = 'https://example.com/path_(x)?a=1&b=2';
-const DEFAULT_DATE_LABEL = 'March 17, 2022, 15:45 UTC';
-const DEFAULT_UNIX_TIME = 1_647_531_900;
-const DEFAULT_DATE_FORMAT = 'wDT';
+export const TEST_LINK_URL = 'https://example.com/path_(x)?a=1&b=2';
+export const TEST_DATE_LABEL = 'March 17, 2022, 15:45 UTC';
+export const TEST_UNIX_TIME = 1_647_531_900;
+export const TEST_DATE_FORMAT: DateTimeFormat = 'wDT';
 
 export const advancedMessageSpecSchema = z.object({
   title: z.string().min(1).max(80).describe('Bold title'),
@@ -43,15 +32,12 @@ export const advancedMessageSpecSchema = z.object({
     .string()
     .min(1)
     .max(160)
-    .describe('Short phrase to render in five nested styles'),
+    .regex(
+      /^[\p{L}\p{N}\p{Zs}\p{P}\p{Sc}\p{Sm}]+$/u,
+      'Use readable letters, numbers, spaces, and simple punctuation',
+    )
+    .describe('Short readable phrase without emoji or newlines'),
   link_label: z.string().min(1).max(60).describe('Visible link label'),
-  link_url: z
-    .string()
-    .url()
-    .max(300)
-    .regex(/^https?:\/\//i, 'Must be an http(s) URL')
-    .default(DEFAULT_LINK_URL)
-    .describe('Link URL; defaults to the special-character test URL'),
   inline_code: z
     .string()
     .min(1)
@@ -63,7 +49,8 @@ export const advancedMessageSpecSchema = z.object({
     .min(1)
     .max(20)
     .regex(/^[A-Za-z0-9_+#.-]+$/, 'Use a simple language tag')
-    .describe('Code block language tag'),
+    .default('ts')
+    .describe('Code block language tag; defaults to ts'),
   quote: z
     .string()
     .min(1)
@@ -74,22 +61,6 @@ export const advancedMessageSpecSchema = z.object({
     .min(1)
     .max(600)
     .describe('Expandable quote text; the runtime pads it to six lines'),
-  date_label: z
-    .string()
-    .min(1)
-    .max(60)
-    .default(DEFAULT_DATE_LABEL)
-    .describe('Label for the absolute date-time'),
-  unix_time: z
-    .number()
-    .int()
-    .positive()
-    .default(DEFAULT_UNIX_TIME)
-    .describe('Unix timestamp in seconds'),
-  date_format: z
-    .enum(DATE_TIME_FORMATS)
-    .default(DEFAULT_DATE_FORMAT)
-    .describe('Telegram date-time format'),
 });
 
 export type AdvancedMessageSpec = z.infer<typeof advancedMessageSpecSchema>;
@@ -105,21 +76,23 @@ const EXPANDABLE_FALLBACK_LINES = [
 
 /** Build the advanced Telegram message from model-provided content. */
 export function buildLlmMessage(spec: AdvancedMessageSpec): FormattedMessage {
-  const expandable = ensureExpandableQuote(normalizeProse(spec.expandable_quote));
+  const expandable = ensureExpandableQuote(
+    normalizeProse(spec.expandable_quote),
+  );
   const quoted = fmt`${bold(normalizeProse(spec.quote))}
 
 Nested: ${italic('italic')}, ${link('a link', 'https://example.com')}, and ${code('npm test')}.`;
   const nowUnix = Math.floor(Date.now() / 1000);
 
-  return fmt`${bold(spec.title)}
+  return fmt`${bold(oneLine(spec.title))}
 
 Escaping: _ * [ ] ( ) ~ \` > # + - = | { } . ! \\ < & "
 Unicode: ${bold('👍🏽 👨‍👩‍👧‍👦')} | HTML: <b>literal</b> & "quotes"
-Intro: ${spec.intro}
-Nested: ${bold(italic(underline(strikethrough(spoiler(spec.nested_text)))))}
+Intro: ${normalizeProse(spec.intro)}
+Nested: ${bold(italic(underline(strikethrough(spoiler(oneLine(spec.nested_text))))))}
 Adjacent: ${italic('italic')}${underline('underline')}
 
-${link(bold(spec.link_label), spec.link_url)}
+${link(bold(oneLine(spec.link_label)), TEST_LINK_URL)}
 Inline code: ${code(spec.inline_code)}
 
 ${pre(spec.code, spec.code_language)}
@@ -128,13 +101,26 @@ ${quote(quoted)}
 
 ${expandableQuote(expandable)}
 
-${dateTime('now', nowUnix, 'r')} · ${dateTime(spec.date_label, spec.unix_time, spec.date_format)}
+${dateTime('now', nowUnix, 'r')} · ${dateTime(TEST_DATE_LABEL, TEST_UNIX_TIME, TEST_DATE_FORMAT)}
 `;
 }
 
-/** Models sometimes emit literal newline escapes or HTML breaks. */
+/** Models sometimes emit literal newline escapes, HTML breaks, or entities. */
 function normalizeProse(value: string): string {
-  return value.replace(/<br\s*\/?>/gi, '\n').replace(/\\n/g, '\n');
+  return value
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/\\n/g, '\n')
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&apos;/gi, "'")
+    .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/gi, ' ');
+}
+
+function oneLine(value: string): string {
+  return normalizeProse(value).replace(/\s+/g, ' ').trim();
 }
 
 function ensureExpandableQuote(value: string): string {

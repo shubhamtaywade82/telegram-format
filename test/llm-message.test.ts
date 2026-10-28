@@ -17,31 +17,46 @@ const spec: AdvancedMessageSpec = {
     'Escaping torture: _ * [ ] ( ) ~ ` > # + - = | { } . ! \\ < & and an emoji 👍🏽.',
   nested_text: 'five styles',
   link_label: 'Link with (parens) & bold',
-  link_url: 'https://example.com/path_(x)?a=1&b=2',
   inline_code: 'a`b\\c',
   code: 'const re = /`/g;\nconst path = "C:\\\\tmp";',
   code_language: 'ts',
   quote: 'Quoted heading\nwith italic, a link, and npm test.',
   expandable_quote: 'This quote expands when tapped.',
-  date_label: 'March 17, 2022, 15:45 UTC',
-  unix_time: 1647531900,
-  date_format: 'wDT',
 };
 
 test('LLM schema validates model arguments', () => {
   const parsed = advancedMessageSpecSchema.parse(spec);
 
-  assert.equal(parsed.date_format, 'wDT');
-  assert.throws(() =>
+  assert.equal(parsed.title, spec.title);
+  assert.equal(
     advancedMessageSpecSchema.parse({
-      ...spec,
-      link_url: 'ftp://example.com/file',
-    }),
+      title: spec.title,
+      intro: spec.intro,
+      nested_text: spec.nested_text,
+      link_label: spec.link_label,
+      inline_code: spec.inline_code,
+      code: spec.code,
+      quote: spec.quote,
+      expandable_quote: spec.expandable_quote,
+    }).code_language,
+    'ts',
   );
   assert.throws(() =>
     advancedMessageSpecSchema.parse({
       ...spec,
       code_language: 'bad`language',
+    }),
+  );
+  assert.throws(() =>
+    advancedMessageSpecSchema.parse({
+      ...spec,
+      nested_text: 'line\nbreak',
+    }),
+  );
+  assert.throws(() =>
+    advancedMessageSpecSchema.parse({
+      ...spec,
+      nested_text: 'emoji 😀',
     }),
   );
 });
@@ -85,28 +100,10 @@ test('LLM message pads short expandable quotes to six lines', () => {
   assert.ok(quoteText.split('\n').length >= 6);
 });
 
-test('LLM schema supplies deterministic structural defaults', () => {
-  const parsed = advancedMessageSpecSchema.parse({
-    title: spec.title,
-    intro: spec.intro,
-    nested_text: spec.nested_text,
-    link_label: spec.link_label,
-    inline_code: spec.inline_code,
-    code: spec.code,
-    code_language: spec.code_language,
-    quote: spec.quote,
-    expandable_quote: spec.expandable_quote,
-  });
-
-  assert.equal(parsed.link_url, spec.link_url);
-  assert.equal(parsed.date_label, spec.date_label);
-  assert.equal(parsed.unix_time, spec.unix_time);
-  assert.equal(parsed.date_format, spec.date_format);
-});
-
 test('LLM message normalizes literal newline escapes in prose', () => {
   const message = buildLlmMessage({
     ...spec,
+    link_label: 'Docs &amp; examples&nbsp;',
     quote: 'Quote line 1<br>Quote line 2',
     expandable_quote:
       'Line 1\\nLine 2\\nLine 3\\nLine 4\\nLine 5\\nLine 6',
@@ -129,6 +126,7 @@ test('LLM message normalizes literal newline escapes in prose', () => {
     expandable.offset + expandable.length,
   );
 
+  assert.match(message.text, /Docs & examples/);
   assert.ok(quoteText.includes('Quote line 1\nQuote line 2'));
   assert.equal(expandableText.split('\n').length, 6);
   assert.ok(!expandableText.includes('\\n'));
@@ -160,6 +158,11 @@ test('LLM message renders safe HTML and MarkdownV2 payloads', () => {
 
   assert.ok(html.includes('&lt;b&gt;literal&lt;/b&gt;'));
   assert.ok(html.includes('<blockquote expandable>'));
+  assert.ok(
+    html.includes(
+      'href="https://example.com/path_(x)?a=1&amp;b=2"',
+    ),
+  );
   assert.ok(html.includes('<tg-time unix="1647531900" format="wDT">'));
   assert.ok(markdown.includes('Nested: *_**__~||five styles||~__**_*'));
   assert.ok(markdown.includes('(tg://time?unix='));

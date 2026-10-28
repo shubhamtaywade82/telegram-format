@@ -30,15 +30,14 @@ const USER_PROMPT = [
   'Keep every value within the schema limits. Requirements:',
   '- title: short, mentions LLM and Telegram formatting, max 80 characters',
   '- intro: one or two sentences with a few reserved characters and a Unicode emoji, max 200 characters',
-  '- nested_text: one short phrase, max 160 characters, no formatting syntax',
-  '- link_label: a short visible label with parentheses and an ampersand, max 60 characters, no URL',
+  '- nested_text: one short readable phrase, max 100 characters; letters, numbers, spaces, and simple punctuation only; no newlines, emoji, code, or formatting syntax',
+  '- link_label: a short visible label with parentheses and the literal & character, max 60 characters, no URL',
   '- inline_code: a short snippet with a backtick and a backslash, max 80 characters',
   '- code: two to five lines of TypeScript with a template literal or regex using a backtick, max 400 characters, no Markdown fences',
   '- code_language: "ts"',
   '- quote: two or three plain-text lines about why Telegram formatting matters, max 300 characters',
   '- expandable_quote: exactly six short plain-text lines using real newline characters, not literal \\n, max 600 characters',
-  'You can omit link_url, date_label, unix_time, and date_format; the tool supplies deterministic defaults.',
-  'Do not use HTML tags or Markdown formatting in prose fields.',
+  'Do not use HTML tags, HTML entities, or Markdown formatting in prose fields.',
   'Do not ask questions. Make the tool call now.',
 ].join('\n');
 

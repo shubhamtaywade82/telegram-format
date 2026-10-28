@@ -374,7 +374,7 @@ The live check spaces sends about 1.1 seconds apart to respect Telegram's per-ch
 
 ### LLM tool-calling check
 
-`pnpm test:llm` uses [`@nemesis-oss/ollama-sdk`](https://www.npmjs.com/package/@nemesis-oss/ollama-sdk) to ask a local tool-capable model to generate the message content and call a `send_advanced_message` tool. The model writes the title, intro, nested text, link label, inline code, code block, quote, and expandable quote. The harness fixes only the link URL and date-time fields needed for deterministic special-character and date rendering. The SDK validates the model's arguments against a Zod schema, the handler builds the advanced message, and the script renders it as native entities, HTML, and MarkdownV2. The model must call the tool; plain-text answers fail the check.
+`pnpm test:llm` uses [`@nemesis-oss/ollama-sdk`](https://www.npmjs.com/package/@nemesis-oss/ollama-sdk) to ask a local tool-capable model to generate the message content and call a `send_advanced_message` tool. The model writes the title, intro, nested text, link label, inline code, code block, quote, and expandable quote. The harness supplies the link URL and date-time values needed for deterministic special-character and date rendering. The SDK validates the model's arguments against a Zod schema, rejects unreadable control/combining/emoji noise in the nested phrase, the handler builds the advanced message, and the script renders it as native entities, HTML, and MarkdownV2. The model must call the tool; plain-text answers fail the check.
 
 The default model is `minicpm5-toolagent:latest` and the default server is `http://localhost:11434`. Other local MiniCPM variants such as `minicpm5:2b` work too:
 
