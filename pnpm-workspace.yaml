@@ -1,2 +1,5 @@
 allowBuilds:
   esbuild: false
+# The LLM check tracks the current @nemesis-oss/ollama-sdk release.
+minimumReleaseAgeExclude:
+  - '@nemesis-oss/ollama-sdk@1.24.1'

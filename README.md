@@ -344,7 +344,7 @@ Types exported: `Content`, `DateTimeFormat`, `FormattedMessage`, `MessageEntity`
 - Numbers must be finite; `NaN` and `Infinity` throw a `RangeError`.
 - `fmt` must be used as a tagged template. Calling it as a normal function throws.
 - Message length limits and automatic splitting are intentionally out of scope.
-- The library formats messages; it does not call the Telegram API except in the opt-in live check script.
+- The library formats messages; it does not call the Telegram API except in the opt-in live and LLM check scripts.
 - This package is ESM-only and targets modern runtimes (Node.js 22+, Bun, Deno, and modern browsers/bundlers).
 
 ## Development
@@ -358,7 +358,7 @@ pnpm build
 pnpm check          # typecheck + coverage + build
 ```
 
-Coverage uses Node's built-in test runner instrumentation; no extra dependency is required. The current suite reports 100% lines, 98.26% branches, and 100% functions.
+Coverage uses Node's built-in test runner instrumentation; no extra dependency is required. The current suite reports 100% lines, 98.40% branches, and 100% functions.
 
 ### Live Telegram check
 
@@ -371,6 +371,20 @@ BOT_TOKEN=123:abc CHAT_ID=123456789 pnpm test:live
 The script sends the same advanced message as native entities, HTML, and MarkdownV2. It covers multi-level nested styles, adjacent italic/underline markers, Unicode and ZWJ sequences, escaping of every MarkdownV2 reserved character, literal HTML tags, links with parentheses and ampersands, inline code containing backticks and backslashes, a language-tagged code block, a multiline quote, a long expandable quote, and relative plus absolute date-times. It prints the message IDs so you can inspect the rendering. Set `DELETE_MESSAGES=1` to remove them afterward.
 
 The live check spaces sends about 1.1 seconds apart to respect Telegram's per-chat limit, retries HTTP 429 responses using `retry_after`, and times out individual requests after 15 seconds. Before sending, it verifies that each rendered payload is 1-4096 UTF-16 code units. It does not split oversized messages; automatic splitting remains out of scope for the core library.
+
+### LLM tool-calling check
+
+`pnpm test:llm` uses [`@nemesis-oss/ollama-sdk`](https://www.npmjs.com/package/@nemesis-oss/ollama-sdk) to ask a local tool-capable model to generate the message content and call a `send_advanced_message` tool. The model writes the title, intro, nested text, link label, inline code, code block, quote, and expandable quote. The harness fixes only the link URL and date-time fields needed for deterministic special-character and date rendering. The SDK validates the model's arguments against a Zod schema, the handler builds the advanced message, and the script renders it as native entities, HTML, and MarkdownV2. The model must call the tool; plain-text answers fail the check.
+
+The default model is `minicpm5-toolagent:latest` and the default server is `http://localhost:11434`. Other local MiniCPM variants such as `minicpm5:2b` work too:
+
+```sh
+DRY_RUN=1 pnpm test:llm
+OLLAMA_MODEL=minicpm5:2b pnpm test:llm
+BOT_TOKEN=123:abc CHAT_ID=123456789 pnpm test:llm
+```
+
+Without `BOT_TOKEN`/`CHAT_ID`, or with `DRY_RUN=1`, the script prints the rendered payloads instead of sending them. Set `OLLAMA_BASE_URL` to use another Ollama server, and `DELETE_MESSAGES=1` to remove live messages afterward. The tool caches the send outcome, so a model that calls it twice does not send duplicates. The agent loop is bounded by iteration and tool-call limits and uses cycle detection.
 
 CI runs `pnpm check` on Node.js 22 and 24. A separate manually triggered workflow runs the live check with `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` repository secrets.
 

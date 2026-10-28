@@ -166,6 +166,9 @@ importers:
 
   .:
     devDependencies:
+      '@nemesis-oss/ollama-sdk':
+        specifier: 1.24.1
+        version: 1.24.1(zod@4.6.7)
       '@types/node':
         specifier: ^26.6.5
         version: 26.6.5
@@ -175,6 +178,9 @@ importers:
       typescript:
         specifier: ^7.0.2
         version: 7.0.2
+      zod:
+        specifier: ^4.6.7
+        version: 4.6.7
 
 packages:
 
@@ -334,6 +340,19 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@nemesis-oss/ollama-sdk@1.24.1':
+    resolution: {integrity: sha512-0ndWjeGLpH2HUyF12MZf8PW4gLZZWkiHixAxGYeTkb9bXIWDNr1OfJ1lpzCzl1YDij0UO2fNEOLPy8CgnChCoA==}
+    engines: {node: '>=20.0.0'}
+    peerDependencies:
+      '@modelcontextprotocol/client': ^2.1.0
+      '@opentelemetry/api': ^1.9.0
+      zod: ^3.22.0 || ^4.0.0
+    peerDependenciesMeta:
+      '@modelcontextprotocol/client':
+        optional: true
+      '@opentelemetry/api':
+        optional: true
+
   '@types/node@26.6.5':
     resolution: {integrity: sha512-uMzsv9stDdofIZBx4UGh4Z9ZgXnGC9seRDscilBcTHAeOFk67MZg/k9bWVfO+bk4qZmG+l52hRnLwUiH2LnJTg==}
 
@@ -480,6 +499,9 @@ packages:
   undici-types@8.9.0:
     resolution: {integrity: sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg==}
 
+  zod@4.6.7:
+    resolution: {integrity: sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg==}
+
 snapshots:
 
   '@esbuild/aix-ppc64@0.28.2':
@@ -559,6 +581,10 @@ snapshots:
 
   '@esbuild/win32-x64@0.28.2':
     optional: true
+
+  '@nemesis-oss/ollama-sdk@1.24.1(zod@4.6.7)':
+    dependencies:
+      zod: 4.6.7
 
   '@types/node@26.6.5':
     dependencies:
@@ -686,3 +712,5 @@ snapshots:
       '@typescript/typescript-win32-x64': 7.0.2
 
   undici-types@8.9.0: {}
+
+  zod@4.6.7: {}
