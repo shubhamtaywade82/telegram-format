@@ -63,7 +63,7 @@ jobs:
           registry-url: https://registry.npmjs.org
       - name: Publish to npm
         run: |
-          package_file="$(find dist -maxdepth 1 -name '*.tgz' -print -quit)"
+          package_file="$(find "$PWD/dist" -maxdepth 1 -name '*.tgz' -print -quit)"
           if [ -z "$package_file" ]; then
             echo "No package tarball found"
             exit 1
