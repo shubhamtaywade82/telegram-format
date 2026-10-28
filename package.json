@@ -1,0 +1,52 @@
+{
+  "name": "@nemesis-oss/tg-format",
+  "version": "0.1.0",
+  "description": "Type-safe Telegram message formatting for TypeScript: native message entities, HTML, and MarkdownV2 from one message model.",
+  "keywords": [
+    "telegram",
+    "telegram-bot-api",
+    "formatting",
+    "message-entities",
+    "markdownv2",
+    "html",
+    "typescript",
+    "grammy",
+    "telegraf"
+  ],
+  "license": "MIT",
+  "author": "Nemesis OSS",
+  "type": "module",
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/index.d.ts",
+      "default": "./build/index.js"
+    }
+  },
+  "files": [
+    "build"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@12.11.2",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import=tsx --test \"test/*.test.ts\"",
+    "test:watch": "node --import=tsx --test --watch \"test/*.test.ts\"",
+    "test:live": "node --import=tsx scripts/live-check.ts",
+    "check": "pnpm typecheck && pnpm test && pnpm build"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}
