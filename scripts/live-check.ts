@@ -43,7 +43,16 @@ if (!token || !chatId) {
 
 const message = fmt`Live check ${bold('entities')} / ${italic('HTML')} / ${link('MarkdownV2', 'https://example.com')}
 ${pre('const ok = true;', 'ts')}
-${expandableQuote('Expandable quote content')}
+${expandableQuote(
+  [
+    'Expandable quote content. This quote starts collapsed.',
+    'Only the first few lines are visible by default.',
+    'Tap the quote to expand it and reveal the rest.',
+    'This line is part of the hidden section.',
+    'So is this one.',
+    'This is the final line of the expandable quote.',
+  ].join('\n'),
+)}
 ${dateTime('March 17, 2022, 15:45 UTC', 1647531900, 'wDT')}
 `;
 

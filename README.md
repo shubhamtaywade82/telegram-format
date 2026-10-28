@@ -240,6 +240,8 @@ expandableQuote('Hidden until expanded');
 
 Aliases: `blockquote`, `expandableBlockquote`. Blockquotes cannot be nested. They may contain styles, links, mentions, custom emoji, and inline code, but not `pre`.
 
+Telegram only shows a collapse/expand control when the quoted content is tall enough. A short, one-line expandable quote may render fully with nothing to toggle; use several lines to see the collapsed state.
+
 ### Composition
 
 ```ts
