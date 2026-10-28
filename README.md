@@ -368,7 +368,7 @@ The local suite does not prove that Telegram accepts every payload. To verify ag
 BOT_TOKEN=123:abc CHAT_ID=123456789 pnpm test:live
 ```
 
-The script sends the same message as native entities, HTML, and MarkdownV2, including nested styles, a code block, an expandable quote, and a date-time entity. It prints the message IDs so you can inspect the rendering. Set `DELETE_MESSAGES=1` to remove them afterward.
+The script sends the same advanced message as native entities, HTML, and MarkdownV2. It covers multi-level nested styles, adjacent italic/underline markers, Unicode and ZWJ sequences, escaping of every MarkdownV2 reserved character, literal HTML tags, links with parentheses and ampersands, inline code containing backticks and backslashes, a language-tagged code block, a multiline quote, a long expandable quote, and relative plus absolute date-times. It prints the message IDs so you can inspect the rendering. Set `DELETE_MESSAGES=1` to remove them afterward.
 
 The live check spaces sends about 1.1 seconds apart to respect Telegram's per-chat limit, retries HTTP 429 responses using `retry_after`, and times out individual requests after 15 seconds. Before sending, it verifies that each rendered payload is 1-4096 UTF-16 code units. It does not split oversized messages; automatic splitting remains out of scope for the core library.
 
