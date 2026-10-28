@@ -356,9 +356,11 @@ pnpm test:coverage  # same suite with a 95% line/branch/function gate
 pnpm typecheck
 pnpm build
 pnpm check          # typecheck + coverage + build
+pnpm audit --audit-level high
+npm pack --dry-run  # inspect the published tarball
 ```
 
-Coverage uses Node's built-in test runner instrumentation; no extra dependency is required. The current suite reports 100% lines, 98.40% branches, and 100% functions.
+Coverage uses Node's built-in test runner instrumentation; no extra dependency is required. The current suite reports 100% lines, 98.43% branches, and 100% functions.
 
 ### Live Telegram check
 
@@ -387,6 +389,36 @@ BOT_TOKEN=123:abc CHAT_ID=123456789 pnpm test:llm
 Without `BOT_TOKEN`/`CHAT_ID`, or with `DRY_RUN=1`, the script prints the rendered payloads instead of sending them. Set `OLLAMA_BASE_URL` to use another Ollama server, and `DELETE_MESSAGES=1` to remove live messages afterward. The tool caches the send outcome, so a model that calls it twice does not send duplicates. The agent loop is bounded by iteration and tool-call limits and uses cycle detection.
 
 CI runs `pnpm check` on Node.js 22 and 24. A separate manually triggered workflow runs the live check with `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` repository secrets.
+
+### Releasing
+
+Releases are published from a `v*` tag by the `Publish` workflow:
+
+1. Update `version` in `package.json`.
+2. Run `pnpm check` and `npm pack --dry-run`.
+3. Add an `NPM_TOKEN` repository secret with publish access. The `npm` environment can require reviewers in repository settings.
+4. Commit and push, then create and push a matching tag:
+   ```sh
+   git tag v0.1.0
+   git push origin v0.1.0
+   ```
+
+The workflow verifies that the tag matches the package version, runs checks, packs the npm artifact, and publishes that artifact with provenance from the protected `npm` environment. Prerelease versions such as `v0.2.0-rc.1` are published under the `next` dist-tag. Promote a verified prerelease with:
+
+```sh
+npm dist-tag add @nemesis-oss/tg-format@0.2.0 latest
+```
+
+If a release is bad, move `latest` back to the previous version and deprecate the bad release:
+
+```sh
+npm dist-tag add @nemesis-oss/tg-format@0.1.0 latest
+npm deprecate @nemesis-oss/tg-format@0.2.0 "Use 0.1.0 instead"
+```
+
+### Repository protections
+
+For the public repository, enable branch protection on `main`, require the CI checks, and enable Dependabot alerts, secret scanning with push protection, and CodeQL default setup in GitHub settings. Restrict the `npm` environment to release tags and require review before deployment.
 
 ## License
 

@@ -15,6 +15,14 @@
   ],
   "license": "MIT",
   "author": "Nemesis OSS",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shubhamtaywade82/telegram-format.git"
+  },
+  "homepage": "https://github.com/shubhamtaywade82/telegram-format#readme",
+  "bugs": {
+    "url": "https://github.com/shubhamtaywade82/telegram-format/issues"
+  },
   "type": "module",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
