@@ -34,7 +34,9 @@ jobs:
           fi
       - run: pnpm check
       - name: Pack npm artifact
-        run: npm pack --pack-destination dist
+        run: |
+          mkdir -p dist
+          npm pack --pack-destination dist
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: npm-package
