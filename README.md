@@ -368,6 +368,8 @@ BOT_TOKEN=123:abc CHAT_ID=123456789 pnpm test:live
 
 The script sends the same message as native entities, HTML, and MarkdownV2, including nested styles, a code block, an expandable quote, and a date-time entity. It prints the message IDs so you can inspect the rendering. Set `DELETE_MESSAGES=1` to remove them afterward.
 
+The live check spaces sends about 1.1 seconds apart to respect Telegram's per-chat limit, retries HTTP 429 responses using `retry_after`, and times out individual requests after 15 seconds. Before sending, it verifies that each rendered payload is 1-4096 UTF-16 code units. It does not split oversized messages; automatic splitting remains out of scope for the core library.
+
 CI runs `pnpm check` on Node.js 22 and 24. A separate manually triggered workflow runs the live check with `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` repository secrets.
 
 ## License
