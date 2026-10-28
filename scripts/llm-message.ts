@@ -89,7 +89,7 @@ Nested: ${italic('italic')}, ${link('a link', 'https://example.com')}, and ${cod
 Escaping: _ * [ ] ( ) ~ \` > # + - = | { } . ! \\ < & "
 Unicode: ${bold('👍🏽 👨‍👩‍👧‍👦')} | HTML: <b>literal</b> & "quotes"
 Intro: ${normalizeProse(spec.intro)}
-Nested: ${bold(italic(underline(strikethrough(spoiler(oneLine(spec.nested_text))))))}
+Nested (tap to reveal): ${bold(italic(underline(strikethrough(spoiler(oneLine(spec.nested_text))))))}
 Adjacent: ${italic('italic')}${underline('underline')}
 
 ${link(bold(oneLine(spec.link_label)), TEST_LINK_URL)}

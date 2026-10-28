@@ -164,7 +164,11 @@ test('LLM message renders safe HTML and MarkdownV2 payloads', () => {
     ),
   );
   assert.ok(html.includes('<tg-time unix="1647531900" format="wDT">'));
-  assert.ok(markdown.includes('Nested: *_**__~||five styles||~__**_*'));
+  assert.ok(
+    markdown.includes(
+      'Nested \\(tap to reveal\\): *_**__~||five styles||~__**_*',
+    ),
+  );
   assert.ok(markdown.includes('(tg://time?unix='));
 
   for (const format of ['entities', 'HTML', 'MarkdownV2'] as const) {
