@@ -167,8 +167,8 @@ importers:
   .:
     devDependencies:
       '@nemesis-oss/ollama-sdk':
-        specifier: 1.24.2
-        version: 1.24.2(zod@4.6.7)
+        specifier: 1.25.1
+        version: 1.25.1(zod@4.6.7)
       '@types/node':
         specifier: ^26.6.5
         version: 26.6.6
@@ -340,8 +340,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@nemesis-oss/ollama-sdk@1.24.2':
-    resolution: {integrity: sha512-mN31FcpGzPn9oIefsqip2Yg1gKvTjTYn0f+sokET79XT+vWJqldPZFJIinHDnKDa9/HbiRj1NzfsGDDn0ewgdQ==}
+  '@nemesis-oss/ollama-sdk@1.25.1':
+    resolution: {integrity: sha512-Vzfttmc0dBrPSawvw8XrLsFW3XsCPtpMMMnCjrmX+/Dlh9ARojNrVPLB0oOl5rxFaHpX8ECovszjpSAlwMp7Sg==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       '@modelcontextprotocol/client': ^2.1.0
@@ -582,7 +582,7 @@ snapshots:
   '@esbuild/win32-x64@0.28.2':
     optional: true
 
-  '@nemesis-oss/ollama-sdk@1.24.2(zod@4.6.7)':
+  '@nemesis-oss/ollama-sdk@1.25.1(zod@4.6.7)':
     dependencies:
       zod: 4.6.7
 
