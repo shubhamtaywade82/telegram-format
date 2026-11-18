@@ -1,9 +1,16 @@
 name: Publish
 
+# Called by release-please.yml only. That file must be the trusted-publisher
+# entry on npmjs.com, because trusted publishing validates the calling workflow.
+# Publishes with npm trusted publishing (OIDC): no npm token is used.
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_call:
+    inputs:
+      tag:
+        description: 'npm dist-tag to publish under'
+        required: false
+        type: string
+        default: 'latest'
 
 permissions:
   contents: read
@@ -25,13 +32,6 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm audit --audit-level high
-      - name: Verify tag matches package version
-        run: |
-          package_version="v$(node -p "require('./package.json').version")"
-          if [ "$package_version" != "$GITHUB_REF_NAME" ]; then
-            echo "Tag $GITHUB_REF_NAME does not match $package_version"
-            exit 1
-          fi
       - run: pnpm check
       - name: Pack npm artifact
         run: |
@@ -48,6 +48,7 @@ jobs:
     needs: verify
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # Trusted-publisher environment on npmjs.com must be `npm`.
     environment: npm
     permissions:
       contents: read
@@ -63,14 +64,13 @@ jobs:
       - name: Pin npm for trusted publishing
         run: npm install -g npm@^11.21.0
       - name: Publish to npm (trusted publishing)
+        env:
+          NPM_DIST_TAG: ${{ inputs.tag || 'latest' }}
         run: |
+          set -euo pipefail
           package_file="$(find "$PWD/dist" -maxdepth 1 -name '*.tgz' -print -quit)"
           if [ -z "$package_file" ]; then
             echo "No package tarball found"
             exit 1
           fi
-          if [[ "$GITHUB_REF_NAME" == *-* ]]; then
-            npm publish "$package_file" --provenance --access public --tag next
-          else
-            npm publish "$package_file" --provenance --access public
-          fi
+          npm publish "$package_file" --provenance --access public --tag "$NPM_DIST_TAG"
