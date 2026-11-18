@@ -167,8 +167,8 @@ importers:
   .:
     devDependencies:
       '@nemesis-oss/ollama-sdk':
-        specifier: 1.25.1
-        version: 1.25.1(zod@4.6.7)
+        specifier: 1.25.3
+        version: 1.25.3(zod@4.6.7)
       '@types/node':
         specifier: ^26.6.5
         version: 26.6.6
@@ -340,9 +340,9 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@nemesis-oss/ollama-sdk@1.25.1':
-    resolution: {integrity: sha512-Vzfttmc0dBrPSawvw8XrLsFW3XsCPtpMMMnCjrmX+/Dlh9ARojNrVPLB0oOl5rxFaHpX8ECovszjpSAlwMp7Sg==}
-    engines: {node: '>=20.0.0'}
+  '@nemesis-oss/ollama-sdk@1.25.3':
+    resolution: {integrity: sha512-NjNn8octYsXcgouxDhy03Dot3ytaCxJ1jr8sTdtY5lV3grL4+XhesztOXhCX8+iolNAcYub/+Hhpr+oHPVcXjQ==}
+    engines: {node: '>=22.0.0'}
     peerDependencies:
       '@modelcontextprotocol/client': ^2.1.0
       '@opentelemetry/api': ^1.9.0
@@ -582,7 +582,7 @@ snapshots:
   '@esbuild/win32-x64@0.28.2':
     optional: true
 
-  '@nemesis-oss/ollama-sdk@1.25.1(zod@4.6.7)':
+  '@nemesis-oss/ollama-sdk@1.25.3(zod@4.6.7)':
     dependencies:
       zod: 4.6.7
 
