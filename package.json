@@ -55,7 +55,7 @@
     "check": "pnpm typecheck && pnpm test:coverage && pnpm build"
   },
   "devDependencies": {
-    "@nemesis-oss/ollama-sdk": "1.24.2",
+    "@nemesis-oss/ollama-sdk": "1.25.1",
     "@types/node": "^26.6.5",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2",
